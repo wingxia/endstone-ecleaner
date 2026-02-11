@@ -4,6 +4,8 @@
 
 #include "ecleaner.h"
 #include "version.h"
+#include <cctype>
+#include <string_view>
 
 translate Tran;
 const string data_path = "plugins/ecleaner";
@@ -21,6 +23,80 @@ vector<string> entity_clean_list;
 int clean_tps;
 int clean_time;
 int last_entity;
+
+namespace {
+std::string item_id_to_english_name(std::string_view item_id)
+{
+    if (const auto delimiter = item_id.find(':'); delimiter != std::string_view::npos) {
+        item_id.remove_prefix(delimiter + 1);
+    }
+
+    std::string normalized;
+    normalized.reserve(item_id.size());
+    bool capitalize_next = true;
+
+    for (const char ch : item_id) {
+        if (ch == '_') {
+            normalized.push_back(' ');
+            capitalize_next = true;
+            continue;
+        }
+
+        const auto uch = static_cast<unsigned char>(ch);
+        if (capitalize_next && std::isalpha(uch)) {
+            normalized.push_back(static_cast<char>(std::toupper(uch)));
+        } else {
+            normalized.push_back(static_cast<char>(std::tolower(uch)));
+        }
+        capitalize_next = false;
+    }
+    return normalized;
+}
+
+std::string block_of_name_variant(std::string_view english_name)
+{
+    static constexpr std::string_view block_suffix = " Block";
+    if (english_name.size() <= block_suffix.size() ||
+        english_name.substr(english_name.size() - block_suffix.size()) != block_suffix) {
+        return {};
+    }
+    return "Block of " + std::string(english_name.substr(0, english_name.size() - block_suffix.size()));
+}
+
+bool item_in_clean_list(const std::shared_ptr<endstone::Actor> &actor)
+{
+    // Preserve existing behavior: first try the actor display name.
+    if (ranges::find(item_clean_list, actor->getName()) != item_clean_list.end()) {
+        return true;
+    }
+
+    const auto *item_actor = actor->asItem();
+    if (!item_actor) {
+        return false;
+    }
+    const auto item_stack = item_actor->getItemStack();
+    if (!item_stack) {
+        return false;
+    }
+
+    // Support list entries by item id and by normalized English name.
+    const auto item_id = std::string(item_stack->getType().getId());
+    if (ranges::find(item_clean_list, item_id) != item_clean_list.end()) {
+        return true;
+    }
+
+    const auto english_name = item_id_to_english_name(item_id);
+    if (!english_name.empty() && ranges::find(item_clean_list, english_name) != item_clean_list.end()) {
+        return true;
+    }
+
+    const auto block_of_name = block_of_name_variant(english_name);
+    if (!block_of_name.empty() && ranges::find(item_clean_list, block_of_name) != item_clean_list.end()) {
+        return true;
+    }
+    return false;
+}
+}
 
 //默认config
 vector<string> item_clean_list_default = {"Shulker Box", "White Shulker Box", "Light Gray Shulker Box", "Gray Shulker Box",
@@ -121,10 +197,11 @@ void ECleaner::datafile_check() const {
     int total_clean_num = 0;
     for (const auto& one_actor:getServer().getLevel()->getActors()) {
         if (one_actor->getType() == "minecraft:item") {
+            const bool in_clean_list = item_in_clean_list(one_actor);
             //白名单模式
             if (item_clean_whitelist) {
                 //物品不在白名单里,杀
-                if (ranges::find(item_clean_list,one_actor->getName()) == item_clean_list.end()) {
+                if (!in_clean_list) {
                     one_actor->remove();
                     total_clean_num +=1;
                 }
@@ -132,7 +209,7 @@ void ECleaner::datafile_check() const {
             //黑名单模式
             else {
                 //物品在黑名单里,杀
-                if (ranges::find(item_clean_list,one_actor->getName()) != item_clean_list.end()) {
+                if (in_clean_list) {
                     one_actor->remove();
                     total_clean_num +=1;
                 }
