@@ -63,8 +63,12 @@ std::string block_of_name_variant(std::string_view english_name)
     return "Block of " + std::string(english_name.substr(0, english_name.size() - block_suffix.size()));
 }
 
-bool item_in_clean_list(const std::shared_ptr<endstone::Actor> &actor)
+bool item_in_clean_list(const endstone::Actor *actor)
 {
+    if (!actor) {
+        return false;
+    }
+
     // Preserve existing behavior: first try the actor display name.
     if (ranges::find(item_clean_list, actor->getName()) != item_clean_list.end()) {
         return true;
