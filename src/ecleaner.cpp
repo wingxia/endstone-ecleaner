@@ -5,6 +5,7 @@
 #include "ecleaner.h"
 #include "version.h"
 #include <cctype>
+#include <optional>
 #include <string_view>
 
 translate Tran;
@@ -63,15 +64,28 @@ std::string block_of_name_variant(std::string_view english_name)
     return "Block of " + std::string(english_name.substr(0, english_name.size() - block_suffix.size()));
 }
 
+std::optional<std::string> get_custom_name_from_nbt(const endstone::ItemStack &item_stack)
+{
+    // v0.11.0 NBT API: read display.Name directly from the dropped item stack.
+    const auto nbt = item_stack.getNbt();
+    if (!nbt.contains("display")) {
+        return std::nullopt;
+    }
+    const auto *display = nbt.at("display").get_if<endstone::CompoundTag>();
+    if (!display || !display->contains("Name")) {
+        return std::nullopt;
+    }
+    const auto *custom_name = display->at("Name").get_if<endstone::StringTag>();
+    if (!custom_name || custom_name->value().empty()) {
+        return std::nullopt;
+    }
+    return custom_name->value();
+}
+
 bool item_in_clean_list(const endstone::Actor *actor)
 {
     if (!actor) {
         return false;
-    }
-
-    // Preserve existing behavior: first try the actor display name.
-    if (ranges::find(item_clean_list, actor->getName()) != item_clean_list.end()) {
-        return true;
     }
 
     const auto *item_actor = actor->asItem();
@@ -79,24 +93,29 @@ bool item_in_clean_list(const endstone::Actor *actor)
         return false;
     }
     const auto item_stack = item_actor->getItemStack();
-    if (!item_stack) {
-        return false;
-    }
 
-    // Support list entries by item id and by normalized English name.
-    const auto item_id = std::string(item_stack->getType().getId());
-    if (ranges::find(item_clean_list, item_id) != item_clean_list.end()) {
-        return true;
-    }
-
+    // Compatibility candidates for existing configs and named items.
+    std::vector<std::string> candidates;
+    candidates.reserve(5);
+    candidates.emplace_back(actor->getName());
+    const auto item_id = std::string(item_stack.getType().getId());
+    candidates.emplace_back(item_id);
     const auto english_name = item_id_to_english_name(item_id);
-    if (!english_name.empty() && ranges::find(item_clean_list, english_name) != item_clean_list.end()) {
-        return true;
+    if (!english_name.empty()) {
+        candidates.emplace_back(english_name);
+    }
+    const auto block_of_name = block_of_name_variant(english_name);
+    if (!block_of_name.empty()) {
+        candidates.emplace_back(block_of_name);
+    }
+    if (const auto custom_name = get_custom_name_from_nbt(item_stack); custom_name.has_value()) {
+        candidates.emplace_back(*custom_name);
     }
 
-    const auto block_of_name = block_of_name_variant(english_name);
-    if (!block_of_name.empty() && ranges::find(item_clean_list, block_of_name) != item_clean_list.end()) {
-        return true;
+    for (const auto &candidate : candidates) {
+        if (!candidate.empty() && ranges::find(item_clean_list, candidate) != item_clean_list.end()) {
+            return true;
+        }
     }
     return false;
 }

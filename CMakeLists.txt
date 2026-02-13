@@ -13,14 +13,16 @@ include(FetchContent)
 FetchContent_Declare(
         endstone
         GIT_REPOSITORY https://github.com/EndstoneMC/endstone.git
-        GIT_TAG v0.10.3
+        GIT_TAG v0.11.0
+        GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(endstone)
 
 FetchContent_Declare(
         nlohmann_json
         GIT_REPOSITORY https://github.com/nlohmann/json.git
-        GIT_TAG master
+        GIT_TAG v3.12.0
+        GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
@@ -29,6 +31,7 @@ FetchContent_Declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
         GIT_TAG 11.2.0
+        GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(fmt)
 
