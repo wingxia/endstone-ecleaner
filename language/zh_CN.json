@@ -1,4 +1,8 @@
 {
+  "No data path,auto create": "未检测到数据目录，已自动创建",
+  "Config file created": "配置文件已创建",
+  "Config '{}' has update with default config": "配置项 '{}' 已按默认配置补全",
+  "Config file error!Use default config": "配置文件错误，已使用默认配置",
   "ECleaner has been enable,version: ": "ECleaner已启用,版本: ",
   "The server's current average TPS has fallen below the set value, and entity cleanup will begin soon.": "服务器当前平均tps已低于设定值，即将开始实体清理",
   "Number of dropped items cleaned up: ": "已清理掉落物数: ",
@@ -10,6 +14,9 @@
   "Auto clean item": "自动清理掉落物",
   "Entity whitelist mode": "实体白名单模式",
   "Item whitelist mode": "掉落物白名单模式",
+  "Protect named entities": "保护已命名实体",
+  "Protect named dropped items": "保护已命名掉落物",
+  "Protect valuable dropped items": "保护贵重掉落物",
   "Scheduled cleanup interval time(min)": "定时清理时间间隔(分钟)",
   "Minimum TPS to trigger automatic cleanup": "触发自动清理最低tps",
   "Config file update over": "配置文件更新完成",

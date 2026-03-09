@@ -62,7 +62,16 @@ The default configuration of the configuration file is as follows:
         "Magenta Shulker Box",
         "Pink Shulker Box"
     ],
-    "item_clean_whitelist": true
+    "item_clean_whitelist": true,
+    "language": "zh_CN",
+    "protect_named_entities": true,
+    "protect_named_items": true,
+    "protect_valuable_items": true,
+    "valuable_item_keywords": [
+        "diamond",
+        "netherite",
+        "shulker_box"
+    ]
 }
 ```
 
@@ -81,6 +90,16 @@ The default configuration of the configuration file is as follows:
 `item_clean_list`: This is the dropped item cleaning list. It acts as either a whitelist or a blacklist depending on the dropped item cleaning list mode. The content of the list is the English name of the dropped item, not the ID.
 
 `item_clean_whitelist`: This option determines the dropped item cleaning mode. When set to `true`, it is the dropped item cleaning whitelist mode. When set to `false`, it is the dropped item cleaning blacklist mode. When the dropped item cleaning list mode is whitelist, dropped items not in the list will be automatically cleaned; when it is blacklist, only dropped items in the list will be cleaned. The default configuration is whitelist.
+
+`language`: This is the language file name used by the plugin, without the `.json` suffix.
+
+`protect_named_entities`: When set to `true`, named entities are never cleaned, regardless of whitelist or blacklist mode.
+
+`protect_named_items`: When set to `true`, dropped items with a custom name are never cleaned, regardless of whitelist or blacklist mode.
+
+`protect_valuable_items`: When set to `true`, dropped items matching `valuable_item_keywords` are never cleaned, regardless of whitelist or blacklist mode.
+
+`valuable_item_keywords`: This is the keyword list used to match valuable item IDs. By default it protects all diamond, netherite, and shulker box item IDs. You can edit this list to add or remove protected categories.
 
 > Command Usage
 

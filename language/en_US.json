@@ -1,4 +1,8 @@
 {
+  "No data path,auto create": "No data path,auto create",
+  "Config file created": "Config file created",
+  "Config '{}' has update with default config": "Config '{}' has update with default config",
+  "Config file error!Use default config": "Config file error!Use default config",
   "ECleaner has been enable,version: ": "ECleaner has been enable,version: ",
   "The server's current average TPS has fallen below the set value, and entity cleanup will begin soon.": "The server's current average TPS has fallen below the set value, and entity cleanup will begin soon.",
   "Number of dropped items cleaned up: ": "Number of dropped items cleaned up: ",
@@ -10,6 +14,9 @@
   "Auto clean item": "Auto clean item",
   "Entity whitelist mode": "Entity whitelist mode",
   "Item whitelist mode": "Item whitelist mode",
+  "Protect named entities": "Protect named entities",
+  "Protect named dropped items": "Protect named dropped items",
+  "Protect valuable dropped items": "Protect valuable dropped items",
   "Scheduled cleanup interval time(min)": "Scheduled cleanup interval time(min)",
   "Minimum TPS to trigger automatic cleanup": "Minimum TPS to trigger automatic cleanup",
   "Config file update over": "Config file update over",

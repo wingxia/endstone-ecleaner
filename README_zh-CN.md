@@ -29,7 +29,7 @@ ECleaner为一款使用C++编写的实体清理插件，轻量便捷。
 首次运行插件后将自动在plugins目录创建ecleaner文件夹,里面会生成配置文件config.json
 配置文件的默认配置如下:
 
-```bash
+```json
 {
     "auto_entity_clean": true,
     "auto_item_clean": true,
@@ -62,7 +62,16 @@ ECleaner为一款使用C++编写的实体清理插件，轻量便捷。
         "Magenta Shulker Box",
         "Pink Shulker Box"
     ],
-    "item_clean_whitelist": true
+    "item_clean_whitelist": true,
+    "language": "zh_CN",
+    "protect_named_entities": true,
+    "protect_named_items": true,
+    "protect_valuable_items": true,
+    "valuable_item_keywords": [
+        "diamond",
+        "netherite",
+        "shulker_box"
+    ]
 }
 ```
 
@@ -81,6 +90,16 @@ ECleaner为一款使用C++编写的实体清理插件，轻量便捷。
 `item_clean_list` 为掉落物清理名单，其为白名单或黑名单取决于掉落物清理名单模式，名单内的内容为掉落物的英文名，而非ID。
 
 `item_clean_whitelist` 为掉落物清理模式，其值为true时为掉落物清理白名单模式，其值为false时为掉落物清理黑名单模式。当掉落物清理名单模式为白名单时，掉落物清理名单以外的掉落物将会被自动清理；为黑名单时，只有掉落物清理名单内的实体会被清理。默认配置为白名单。
+
+`language` 为插件使用的语言文件名，不需要带 `.json` 后缀。
+
+`protect_named_entities` 为是否保护已命名实体。开启后，无论白名单还是黑名单模式，都不会清理带名称标签的实体。
+
+`protect_named_items` 为是否保护已命名掉落物。开启后，无论白名单还是黑名单模式，都不会清理带自定义名称的掉落物。
+
+`protect_valuable_items` 为是否保护贵重掉落物。开启后，无论白名单还是黑名单模式，都不会清理命中 `valuable_item_keywords` 的掉落物。
+
+`valuable_item_keywords` 为贵重掉落物关键字列表，按物品 ID 关键字匹配。默认保护所有钻石系列、下界合金系列和潜影箱系列物品，可自行增删关键字。
 
 > 命令用法
 
